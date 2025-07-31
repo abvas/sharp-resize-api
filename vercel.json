@@ -2,7 +2,8 @@
   "version": 2,
   "functions": {
     "api/resize.js": {
-      "runtime": "edge"
+      "memory": 512,
+      "maxDuration": 10
     }
   }
 }

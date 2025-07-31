@@ -2,7 +2,24 @@
   "name": "sharp-resize-api",
   "type": "module",
   "dependencies": {
-    "sharp": "^0.33.1",
-    "node-fetch": "^3.3.2"
-  }
+    "node-fetch": "^3.3.2",
+    "sharp": "^0.33.5"
+  },
+  "version": "1.0.0",
+  "description": "Resizes and converts images via URL and returns base64.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abvas/sharp-resize-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abvas/sharp-resize-api/issues"
+  },
+  "homepage": "https://github.com/abvas/sharp-resize-api#readme"
 }

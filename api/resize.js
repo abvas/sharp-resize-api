@@ -1,41 +1,35 @@
 import sharp from 'sharp';
 import fetch from 'node-fetch';
 
-export const config = {
-  runtime: 'edge',
-};
-
-export default async function handler(req) {
+export default async function handler(req, res) {
   try {
-    const { imageUrl, width, height, format = 'webp' } = await req.json();
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
 
-    if (!imageUrl) {
-      return new Response(JSON.stringify({ error: 'imageUrl is required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    const { imageUrl, width, height, format } = req.body;
+
+    if (!imageUrl || !width || !height || !format) {
+      return res.status(400).json({ error: 'Missing parameters' });
     }
 
     const response = await fetch(imageUrl);
-    const buffer = Buffer.from(await response.arrayBuffer());
+    if (!response.ok) {
+      return res.status(400).json({ error: 'Failed to fetch image' });
+    }
 
-    const image = sharp(buffer).resize(width || null, height || null).toFormat(format);
-    const output = await image.toBuffer();
+    const imageBuffer = await response.buffer();
 
-    const base64 = `data:image/${format};base64,` + output.toString('base64');
+    const outputBuffer = await sharp(imageBuffer)
+      .resize(Number(width), Number(height))
+      .toFormat(format)
+      .toBuffer();
 
-    return new Response(JSON.stringify({
-      base64,
-      extension: format,
-      contentType: `image/${format}`,
-    }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const base64 = `data:image/${format};base64,${outputBuffer.toString('base64')}`;
 
-  } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    res.status(200).json({ base64 });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Image processing failed' });
   }
 }

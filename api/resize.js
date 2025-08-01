@@ -18,7 +18,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Failed to fetch image' });
     }
 
-    const imageBuffer = await response.buffer();
+      // const imageBuffer = await response.buffer() 
+    const imageBuffer = Buffer.from(await response.arrayBuffer());  
 
     const outputBuffer = await sharp(imageBuffer)
       .resize(Number(width), Number(height))
